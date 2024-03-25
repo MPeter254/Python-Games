@@ -1,0 +1,47 @@
+import random
+import time
+import threading
+
+def generate_question():
+    """Generate a random arithmetic question."""
+    num1 = random.randint(1, 20)
+    num2 = random.randint(1, 20)
+    operator = random.choice(['+', '-', '*'])
+    if operator == '+':
+        answer = num1 + num2
+    elif operator == '-':
+        answer = num1 - num2
+    else:
+        answer = num1 * num2
+    question = f"What is {num1} {operator} {num2}? "
+    return question, answer
+
+def timed_math_challenge(num_questions, time_limit_per_question):
+    """Run a timed math challenge game."""
+    print("Welcome to the Timed Math Challenge!")
+    print(f"You have {time_limit_per_question} seconds to answer each question.")
+    print(f"You will be asked {num_questions} questions.")
+
+    score = 0
+
+    def question_thread(question, answer):
+        nonlocal score
+        print(question)
+        user_answer = input("Your answer: ")
+        if user_answer.isdigit() and int(user_answer) == answer:
+            score += 1
+
+    for _ in range(num_questions):
+        question, answer = generate_question()
+        timer = threading.Timer(time_limit_per_question, lambda: print("\nTime's up!"))
+        timer.start()
+        question_thread(question, answer)
+        timer.cancel()
+
+    print("\nChallenge completed!")
+    print(f"You answered {score} out of {num_questions} questions correctly.")
+
+if __name__ == "__main__":
+    num_questions = 5
+    time_limit_per_question = 10  # in seconds
+    timed_math_challenge(num_questions, time_limit_per_question)
